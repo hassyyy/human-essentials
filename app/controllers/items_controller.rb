@@ -64,6 +64,7 @@ class ItemsController < ApplicationController
   def update
     @item = current_organization.items.find(params[:id])
     if @item.update(item_params)
+      @item.kit.update_attribute(:name, item_params[:name]) if @item.kit_id.present?
       redirect_to items_path, notice: "#{@item.name} updated!"
     else
       @base_items = BaseItem.without_kit.alphabetized
