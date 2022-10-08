@@ -47,6 +47,23 @@ RSpec.describe ItemsController, type: :controller do
           expect(item.reload.visible_to_partners).to be false
         end
       end
+
+      context "kit name" do
+        let(:kit) { create(:kit, name: "Test Kit") }
+        let(:item) { create(:item, name: kit.name, kit_id: kit.id) }
+        it "should update the kit name" do
+          # ensure item name is same as kit name before update
+          expect(item.present?).to be true
+          expect(item.name).to eq kit.name
+          # update the item name
+          new_name = "Updated Kit"
+          put :update, params: default_params.merge(id: item.id, item: { name: new_name })
+          # ensure the name is updated in item & kit
+          expect(item.reload.name).to eq new_name
+          expect(kit.reload.name).to eq new_name
+          expect(item.kit.name).to eq new_name
+        end
+      end
     end
 
     describe "GET #show" do
